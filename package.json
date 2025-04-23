@@ -1,0 +1,54 @@
+{
+  "name": "taxiflow",
+  "version": "1.0.0",
+  "description": "这是一个分析北京市出租车GPS轨迹数据的系统，旨在通过可视化和数据分析，揭示城市交通模式。",
+  "main": "main.js",
+  "devDependencies": {
+    "electron": "^35.2.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "dev": "electron . --inspect",
+    "build": "electron-builder",
+    "package-win": "electron-builder --win --x64"
+  },
+  "keywords": [
+    "taxi",
+    "trajectory",
+    "analysis",
+    "visualization",
+    "map"
+  ],
+  "author": "",
+  "license": "ISC",
+  "build": {
+    "appId": "com.taxiflow.app",
+    "productName": "TaxiFlow出租车轨迹分析系统",
+    "directories": {
+      "output": "../dist"
+    },
+    "files": [
+      "**/*",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/*.d.ts",
+      "!**/node_modules/.bin",
+      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+      "!.editorconfig",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes}",
+      "!**/{__pycache__,*.py[cod],*$py.class}",
+      "!**/{.env,.venv,env,venv,ENV,env.bak,venv.bak}"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icons/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "assets/icons/icon.ico"
+    }
+  }
+}

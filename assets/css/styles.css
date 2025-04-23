@@ -1,0 +1,86 @@
+/* 全局样式 */
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    font-family: "微软雅黑", sans-serif;
+    display: flex; /* 使用 Flexbox 布局 */
+    overflow: hidden; /* 防止外层滚动 */
+}
+
+/* 地图容器样式 */
+#map_container {
+    flex-grow: 1; /* 地图区域占据剩余空间 */
+    height: 100%;
+}
+
+/* 控制面板样式 */
+#control_panel {
+    width: 350px; /* 控制面板固定宽度 */
+    height: 100%;
+    padding: 15px;
+    box-sizing: border-box; /* padding 不会撑大宽度 */
+    border-left: 1px solid #ccc;
+    overflow-y: auto; /* 内容超高时可滚动 */
+    background-color: #f9f9f9;
+}
+
+#control_panel h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+#control_panel .function-group {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px dashed #ddd;
+}
+
+#control_panel .function-group:last-child {
+    border-bottom: none;
+}
+
+#control_panel label {
+    display: block;
+    margin-top: 8px;
+    margin-bottom: 3px;
+    font-size: 14px;
+}
+
+#control_panel input[type="text"],
+#control_panel input[type="number"],
+#control_panel input[type="datetime-local"] {
+    width: calc(100% - 12px); /* 考虑内边距 */
+    padding: 5px;
+    margin-bottom: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+#control_panel button {
+    padding: 8px 15px;
+    margin-top: 10px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+#control_panel button:hover {
+    background-color: #45a049;
+}
+
+/* 坐标输入样式 */
+.coord-input-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.coord-input-group input {
+    width: calc(50% - 10px) !important; /* 让两个输入框并排 */
+} 
