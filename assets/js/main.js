@@ -133,8 +133,42 @@ function setupEventListeners() {
         const taxiId = document.getElementById('taxi_id').value;
         console.log('触发: 显示轨迹', '出租车ID:', taxiId || '全部');
         
-        // 调用轨迹显示模块的功能
-        showTrack(map);
+        // 判断是显示单个出租车还是所有出租车轨迹
+        if (taxiId) {
+            // 调用API获取单个出租车轨迹
+            fetch(`http://localhost:5000/api/taxi_routes/${taxiId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('未找到该出租车的轨迹数据');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 将单个出租车数据转换为数组形式传给showTrack
+                    showTrack(map, [data]);
+                })
+                .catch(error => {
+                    console.error('获取轨迹数据失败:', error);
+                    showMessage(`获取轨迹失败: ${error.message}`, 'error');
+                });
+        } else {
+            // 调用API获取所有出租车轨迹
+            fetch('http://localhost:5000/api/taxi_routes/all/tracks')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('获取轨迹数据失败');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 直接将轨迹数组传给showTrack
+                    showTrack(map, data);
+                })
+                .catch(error => {
+                    console.error('获取轨迹数据失败:', error);
+                    showMessage(`获取轨迹失败: ${error.message}`, 'error');
+                });
+        }
     });
     
     document.getElementById('btn_clear_track').addEventListener('click', function() {

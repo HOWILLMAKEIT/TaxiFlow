@@ -4,9 +4,11 @@
 
 const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
+const { spawn } = require('child_process');
 
 // 保持对窗口对象的全局引用，避免JavaScript对象被垃圾回收时窗口关闭
 let mainWindow;
+let pythonProcess = null;
 
 // 创建窗口
 function createWindow() {
@@ -153,11 +155,32 @@ function showAboutDialog() {
   });
 }
 
+function startPythonServer() {
+  const pythonExecutable = process.platform === 'win32' ? 'python' : 'python3';
+  pythonProcess = spawn(pythonExecutable, [path.join(__dirname, 'app.py')]);
+
+  pythonProcess.stdout.on('data', (data) => {
+    console.log(`Flask服务输出: ${data}`);
+  });
+
+  pythonProcess.stderr.on('data', (data) => {
+    console.error(`Flask服务错误: ${data}`);
+  });
+}
+
 // 当Electron完成初始化并准备创建浏览器窗口时调用此方法
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  startPythonServer();
+  createWindow();
+});
 
 // 在所有窗口关闭时退出应用
 app.on('window-all-closed', function () {
+  // 关闭Python进程
+  if (pythonProcess) {
+    process.platform === 'win32' ? spawn("taskkill", ["/pid", pythonProcess.pid, '/f', '/t']) : pythonProcess.kill();
+  }
+  
   // 在macOS上，除非用户用Cmd + Q确定地退出
   // 否则绝大部分应用及其菜单栏会保持激活
   if (process.platform !== 'darwin') {
