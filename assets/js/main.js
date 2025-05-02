@@ -4,55 +4,19 @@
 
 // 导入模块
 import { mapPromise, initMap } from './modules/mapInit.js';
-import { showTrack, clearCurrentTracks } from './modules/trackDisplay.js';
+import { showTrack, clearCurrentTracks } from './modules/F1_taxi_routes.js';
 import { 
     initAreaQueryTools, 
-    startDrawCircle, 
     startDrawRectangle,
-    startDrawPolygon,
     executeAreaQuery,
     clearQueryResults,
     stopDrawingTool
-} from './modules/areaQuery.js';
+} from './modules/F3_area_query.js';
 import { analyzeDensity, clearDensityLayer } from './modules/densityAnalysis.js';
 
 // 全局地图实例
 let map;
-// 模拟轨迹数据
-const mockTrackData = [
-    {
-        id: "京B10001",
-        path: [
-            [116.368904, 39.913423],
-            [116.382122, 39.901176],
-            [116.387271, 39.912501],
-            [116.398258, 39.904600]
-        ],
-        timestamp: [
-            "2023-05-20 08:00:00",
-            "2023-05-20 08:05:30",
-            "2023-05-20 08:10:45",
-            "2023-05-20 08:15:20"
-        ],
-        speed: [35, 42, 28, 30]  // km/h
-    },
-    {
-        id: "京B20002",
-        path: [
-            [116.412222, 39.915678],
-            [116.424589, 39.908765],
-            [116.437123, 39.917654],
-            [116.448888, 39.922109]
-        ],
-        timestamp: [
-            "2023-05-20 08:02:10",
-            "2023-05-20 08:07:45",
-            "2023-05-20 08:12:30",
-            "2023-05-20 08:18:55"
-        ],
-        speed: [38, 25, 32, 40]
-    }
-];
+
 
 // 初始化应用
 document.addEventListener('DOMContentLoaded', function() {
@@ -176,33 +140,23 @@ function setupEventListeners() {
         clearCurrentTracks(map);
     });
 
-    // ===== F3: 区域查询功能 =====
-    document.getElementById('btn_draw_circle').addEventListener('click', function() {
-        console.log('触发: 绘制圆形区域');
-        startDrawCircle();
-    });
-    
+    // ===== F3: 区域查询功能 (仅矩形) =====
     document.getElementById('btn_draw_rectangle').addEventListener('click', function() {
         console.log('触发: 绘制矩形区域');
         startDrawRectangle();
     });
     
-    document.getElementById('btn_draw_polygon').addEventListener('click', function() {
-        console.log('触发: 绘制多边形区域');
-        startDrawPolygon();
-    });
-    
     document.getElementById('btn_execute_query').addEventListener('click', function() {
         console.log('触发: 执行区域查询');
-        // 执行区域查询，将轨迹显示函数作为回调传入
-        executeAreaQuery(map, mockTrackData, showTrack);
+        // 执行区域查询，将轨迹显示函数 showTrack 作为回调传入
+        executeAreaQuery(map, showTrack);
     });
     
     document.getElementById('btn_clear_query').addEventListener('click', function() {
         console.log('触发: 清除查询');
-        clearQueryResults();
-        clearCurrentTracks(map);
-        stopDrawingTool();
+        clearQueryResults(map); // 传入map以清除绘制的图形
+        clearCurrentTracks(map); // 清除查询结果显示的轨迹
+        stopDrawingTool(); // 停止可能正在进行的绘制
     });
 
     // ===== F4: 密度分析功能 =====
@@ -231,33 +185,46 @@ function setupEventListeners() {
     });
 
     document.getElementById('btn_analyze_f6').addEventListener('click', function() {
-        const startTime = document.getElementById('f5_start_time').value;
+        const startTime = document.getElementById('f5_start_time').value; // 注意这里可能用了f5的时间，是否需要独立时间？
         const endTime = document.getElementById('f5_end_time').value;
         console.log('触发: 分析与该区域关联流量', { startTime, endTime });
         showMessage("功能尚未实现: 单区域关联分析 (F6)");
     });
 
-    // ===== F7-F8: 频繁路径分析功能 =====
+    // ===== F7: 全城频繁路径分析功能 =====
     document.getElementById('btn_analyze_f7').addEventListener('click', function() {
         const k = document.getElementById('f7_k').value;
         const x = document.getElementById('f7_x').value;
         console.log('触发: 查找全城频繁路径', { k, x });
         showMessage("功能尚未实现: 全城频繁路径分析 (F7)");
     });
+    // 可能需要添加清除F7结果的按钮监听
+    // document.getElementById('btn_clear_f7').addEventListener(...);
 
+    // ===== F8: 区域间频繁路径分析功能 =====
     document.getElementById('btn_analyze_f8').addEventListener('click', function() {
-        const k = document.getElementById('f7_k').value;
+        const k = document.getElementById('f8_k').value; // 注意这里用了f8的k
+        // 获取区域A和B的坐标...
         console.log('触发: 查找区域间频繁路径', { k });
         showMessage("功能尚未实现: 区域间频繁路径分析 (F8)");
     });
+    // 可能需要添加绘制区域A/B和清除F8结果的按钮监听
+    // document.getElementById('btn_draw_area_a').addEventListener(...);
+    // document.getElementById('btn_draw_area_b').addEventListener(...);
+    // document.getElementById('btn_clear_f8').addEventListener(...);
 
     // ===== F9: 通行时间分析功能 =====
     document.getElementById('btn_analyze_f9').addEventListener('click', function() {
         const startTime = document.getElementById('f9_start_time').value;
         const endTime = document.getElementById('f9_end_time').value;
+        // 获取区域A和B的坐标...
         console.log('触发: 分析最短通行时间', { startTime, endTime });
         showMessage("功能尚未实现: 最短通行时间分析 (F9)");
     });
+    // 可能需要添加绘制区域A/B和清除F9结果的按钮监听
+    // document.getElementById('btn_draw_f9_area_a').addEventListener(...);
+    // document.getElementById('btn_draw_f9_area_b').addEventListener(...);
+    // document.getElementById('btn_clear_f9').addEventListener(...);
 }
 
 /**
@@ -276,7 +243,9 @@ function showMessage(message, type = 'info') {
         
         // 3秒后自动隐藏
         setTimeout(() => {
-            msgElement.style.display = 'none';
+            if (msgElement.textContent === message) { // 避免快速连续消息时提前隐藏
+                msgElement.style.display = 'none';
+            }
         }, 3000);
     }
 } 

@@ -151,11 +151,18 @@
         
         <!-- F3: 区域统计功能 -->
         <div class="function-group">
-            <h4>区域轨迹查询 F3</h4>
+            <h4>区域轨迹查询 F3 </h4>
             <div class="area-tool-group">
-                <button id="btn_draw_circle">圆形区域</button>
-                <button id="btn_draw_rectangle">矩形区域</button>
-                <button id="btn_draw_polygon">多边形区域</button>
+                <button id="btn_draw_rectangle">绘制矩形查询区域</button>
+            </div>
+            
+            <!-- 添加时间范围输入 -->
+            <div class="time-range-group">
+                <label for="f3_start_time">开始时间:</label>
+                <input type="datetime-local" id="f3_start_time" min="2008-02-01T00:00" max="2008-02-08T23:59">
+                
+                <label for="f3_end_time">结束时间:</label>
+                <input type="datetime-local" id="f3_end_time" min="2008-02-01T00:00" max="2008-02-08T23:59">
             </div>
             
             <button id="btn_execute_query">执行区域查询</button>
@@ -169,10 +176,10 @@
         <div class="function-group F4">
             <h4>车流密度分析</h4>
             <label for="f4_start_time">开始时间:</label>
-            <input type="datetime-local" id="f4_start_time">
+            <input type="datetime-local" id="f4_start_time" min="2008-02-01T00:00" max="2008-02-08T23:59">
             
             <label for="f4_end_time">结束时间:</label>
-            <input type="datetime-local" id="f4_end_time">
+            <input type="datetime-local" id="f4_end_time" min="2008-02-01T00:00" max="2008-02-08T23:59">
             
             <label for="f4_grid_size">网格大小(米):</label>
             <input type="number" id="f4_grid_size" value="500" min="100" max="5000">
@@ -185,10 +192,10 @@
         <div class="function-group">
             <h4>区域关联分析 F5 F6</h4>
             <label for="f5_start_time">开始时间:</label>
-            <input type="datetime-local" id="f5_start_time">
+            <input type="datetime-local" id="f5_start_time" min="2008-02-01T00:00" max="2008-02-08T23:59">
             
             <label for="f5_end_time">结束时间:</label>
-            <input type="datetime-local" id="f5_end_time">
+            <input type="datetime-local" id="f5_end_time" min="2008-02-01T00:00" max="2008-02-08T23:59">
             
             <button id="btn_analyze_f5">双区域流量分析</button>
             <button id="btn_analyze_f6">单区域关联网络</button>
@@ -327,10 +334,10 @@
             </div>
             
             <label for="f9_start_time">开始时间:</label>
-            <input type="datetime-local" id="f9_start_time">
+            <input type="datetime-local" id="f9_start_time" min="2008-02-01T00:00" max="2008-02-08T23:59">
             
             <label for="f9_end_time">结束时间:</label>
-            <input type="datetime-local" id="f9_end_time">
+            <input type="datetime-local" id="f9_end_time" min="2008-02-01T00:00" max="2008-02-08T23:59">
             
             <button id="btn_analyze_f9">分析A到B的最短通行时间</button>
             <button id="btn_clear_f9">清除结果</button>
