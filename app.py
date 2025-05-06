@@ -7,10 +7,12 @@ CORS(app)
 # 导入并注册各个API模块
 from api.F1_taxi_routes import taxi_routes
 from api.F3_area_query import area_query  # 导入区域查询API蓝图
+from api.F4_density_analysis import density_bp  # 导入密度分析API蓝图
 # 导入其他API模块...
 
 app.register_blueprint(taxi_routes, url_prefix='/api/taxi_routes')
 app.register_blueprint(area_query, url_prefix='/api/area_query')  # 注册区域查询API蓝图
+app.register_blueprint(density_bp, url_prefix='/api/density')  # 注册密度分析API蓝图
 # 注册其他Blueprint...
 
 @app.route('/api/health', methods=['GET'])
