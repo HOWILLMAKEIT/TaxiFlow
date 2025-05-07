@@ -3,7 +3,7 @@
  */
 
 // 导入模块
-import { mapPromise, initMap } from './modules/mapInit.js';
+import { mapPromise } from './modules/mapInit.js';
 import { showTrack, clearCurrentTracks } from './modules/F1_taxi_routes.js';
 import { 
     initAreaQueryTools, 
@@ -12,51 +12,33 @@ import {
     clearQueryResults,
     stopDrawingTool
 } from './modules/F3_area_query.js';
-import { analyzeDensity, clearDensityLayer } from './modules/densityAnalysis.js';
+import { analyzeDensity, clearDensityLayer } from './modules/F4_density_analysis.js';
 
 // 全局地图实例
-let map;
-
+let map = null;
 
 // 初始化应用
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     console.log("DOM加载完成，初始化应用...");
     
-    // 等待地图初始化完成
-    mapPromise.then((resolvedMap) => {
-        console.log("地图 Promise 已解析，获取到 map 实例:", resolvedMap);
-        map = resolvedMap;
-
-        // 地图加载完成后设置事件监听
-        if (map && typeof map.on === 'function') {
-             map.on('complete', function() {
-                console.log("高德地图实际 complete 事件触发！");
-                
-                // 初始化区域查询工具
-                initAreaQueryTools(map);
-                
-                // 为所有功能按钮绑定事件处理函数
-                setupEventListeners();
-                
-                // 设置默认日期时间值
-                setDefaultDateTimes();
-            });
-            console.log("已为地图添加 'complete' 事件监听器。");
-        } else {
-             console.error("无法添加 'complete' 事件监听器：map 对象无效或没有 on 方法。 Map:", map);
-        }
-
-        // 如果地图实例已经 'complete' (可能在 Promise 解析前就完成了)，直接执行后续逻辑
-        if (map && map.getStatus && map.getStatus().complete) {
-             console.log("地图在 Promise 解析时已经完成加载，直接执行后续逻辑。");
-             initAreaQueryTools(map);
-             setupEventListeners();
-             setDefaultDateTimes();
-         }
-
-    }).catch(error => {
-        console.error("地图初始化 Promise 失败:", error);
-    });
+    try {
+        // 等待地图初始化完成
+        map = await mapPromise;
+        console.log("地图实例获取成功:", map);
+        
+        // 初始化区域查询工具
+        initAreaQueryTools(map);
+        
+        // 设置事件监听
+        setupEventListeners();
+        
+        // 设置默认日期时间值
+        setDefaultDateTimes();
+        
+        console.log("应用初始化完成");
+    } catch (error) {
+        console.error("应用初始化失败:", error);
+    }
 });
 
 /**
@@ -248,4 +230,4 @@ function showMessage(message, type = 'info') {
             }
         }, 3000);
     }
-} 
+}
