@@ -4,16 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>出租车轨迹分析系统 - TaxiFlow</title>
-    
+
     <!-- 引入样式表 -->
     <link rel="stylesheet" href="assets/css/styles.css">
-    
+
     <!-- 引入高德地图 API -->
     <script type="text/javascript" src="https://webapi.amap.com/maps?v=2.0&key=a91eeb53b56979097f78f6475eeff098&plugin=AMap.MouseTool,AMap.GeometryUtil,AMap.MoveAnimation"></script>
-    
+
+    <!-- 引入ECharts图表库 -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+
     <!-- 引入主JS脚本 (使用type="module"支持ES6模块) -->
     <script type="module" src="assets/js/main.js"></script>
-    
+
     <style>
         /* 消息提示框样式 */
         #message-box {
@@ -28,31 +31,31 @@
             max-width: 80%;
             text-align: center;
         }
-        
+
         .message.info {
             background-color: #e3f2fd;
             color: #0d47a1;
             border: 1px solid #bbdefb;
         }
-        
+
         .message.success {
             background-color: #e8f5e9;
             color: #1b5e20;
             border: 1px solid #c8e6c9;
         }
-        
+
         .message.warning {
             background-color: #fff8e1;
             color: #ff6f00;
             border: 1px solid #ffe082;
         }
-        
+
         .message.error {
             background-color: #ffebee;
             color: #b71c1c;
             border: 1px solid #ffcdd2;
         }
-        
+
         /* 轨迹标记样式 */
         .track-marker {
             width: 30px;
@@ -64,28 +67,28 @@
             font-weight: bold;
             color: white;
         }
-        
+
         .start-marker {
             background-color: rgba(76, 175, 80, 0.9);
             border: 2px solid white;
         }
-        
+
         .end-marker {
             background-color: rgba(244, 67, 54, 0.9);
             border: 2px solid white;
         }
-        
+
         /* 区域查询按钮组样式 */
         .area-tool-group {
             display: flex;
             gap: 5px;
             margin-bottom: 10px;
         }
-        
+
         .area-tool-group button {
             flex: 1;
         }
-        
+
         /* 查询统计结果样式 */
         .query-statistics {
             background-color: #f5f5f5;
@@ -94,7 +97,7 @@
             padding: 10px;
             margin-top: 10px;
         }
-        
+
         .query-statistics h4 {
             margin-top: 0;
             margin-bottom: 10px;
@@ -102,17 +105,17 @@
             border-bottom: 1px solid #ddd;
             padding-bottom: 5px;
         }
-        
+
         .query-statistics p {
             margin: 5px 0;
             font-size: 14px;
         }
-        
+
         .query-statistics span {
             font-weight: bold;
             color: #0288d1;
         }
-        
+
         /* 区域选择样式 */
         .area-selection-group {
             border: 1px solid #ddd;
@@ -121,7 +124,7 @@
             margin-bottom: 10px;
             background-color: #f9f9f9;
         }
-        
+
         .area-selection-group h5 {
             margin-top: 0;
             margin-bottom: 8px;
@@ -132,14 +135,14 @@
 <body>
     <!-- 地图容器 -->
     <div id="map_container"></div>
-    
+
     <!-- 消息提示框 -->
     <div id="message-box" class="message info"></div>
-    
+
     <!-- 控制面板 -->
     <div id="control_panel">
         <h3>出租车轨迹分析系统</h3>
-        
+
         <!-- F1/F2: 轨迹显示功能 -->
         <div class="function-group">
             <h4>轨迹查询与显示F1 F2</h4>
@@ -148,76 +151,87 @@
             <button id="btn_show_track">显示轨迹</button>
             <button id="btn_clear_track">清除轨迹</button>
         </div>
-        
+
         <!-- F3: 区域统计功能 -->
         <div class="function-group">
             <h4>区域轨迹查询 F3 </h4>
             <div class="area-tool-group">
                 <button id="btn_draw_rectangle">绘制矩形查询区域</button>
             </div>
-            
+
             <!-- 添加时间范围输入 -->
             <div class="time-range-group">
                 <label for="f3_start_time">开始时间:</label>
                 <input type="datetime-local" id="f3_start_time" min="2008-02-01T00:00" max="2008-02-08T23:59">
-                
+
                 <label for="f3_end_time">结束时间:</label>
                 <input type="datetime-local" id="f3_end_time" min="2008-02-01T00:00" max="2008-02-08T23:59">
             </div>
-            
+
             <button id="btn_execute_query">执行区域查询</button>
             <button id="btn_clear_query">清除查询</button>
-            
+
             <!-- 查询结果统计 -->
             <div id="query-statistics" style="display: none;"></div>
         </div>
-        
+
         <!-- F4: 密度分析功能 -->
         <div class="function-group F4">
             <h4>车流密度分析</h4>
             <label for="f4_start_time">开始时间:</label>
             <input type="datetime-local" id="f4_start_time" min="2008-02-01T00:00" max="2008-02-08T23:59">
-            
+
             <label for="f4_end_time">结束时间:</label>
             <input type="datetime-local" id="f4_end_time" min="2008-02-01T00:00" max="2008-02-08T23:59">
-            
+
             <label for="f4_grid_size">网格大小(米):</label>
             <input type="number" id="f4_grid_size" value="500" min="100" max="5000">
-            
+
             <button id="btn_analyze_density">分析车流密度</button>
             <button id="btn_clear_density">清除密度图层</button>
         </div>
-        
+
         <!-- F5-F6: 区域关联分析功能 -->
         <div class="function-group">
             <h4>区域关联分析 F5 F6</h4>
             <label for="f5_start_time">开始时间:</label>
             <input type="datetime-local" id="f5_start_time" min="2008-02-01T00:00" max="2008-02-08T23:59">
-            
+
             <label for="f5_end_time">结束时间:</label>
             <input type="datetime-local" id="f5_end_time" min="2008-02-01T00:00" max="2008-02-08T23:59">
-            
-            <button id="btn_analyze_f5">双区域流量分析</button>
+
+            <label for="f5_interval">时间间隔(分钟):</label>
+            <input type="number" id="f5_interval" value="60" min="5" max="1440">
+
+            <div class="area-tool-group">
+                <button id="btn_analyze_f5">绘制双区域</button>
+                <button id="btn_execute_f5">分析流量</button>
+                <button id="btn_clear_f5">清除结果</button>
+            </div>
+
+            <!-- 结果容器 -->
+            <div id="f5-result-container"></div>
+
             <button id="btn_analyze_f6">单区域关联网络</button>
         </div>
-        
+
         <!-- F7: 全城频繁路径分析功能 -->
         <div class="function-group">
             <h4>全城频繁路径分析 (F7)</h4>
             <label for="f7_k">显示路径数量(k):</label>
             <input type="number" id="f7_k" value="5" min="1">
-            
+
             <label for="f7_x">最小路径长度(x)米:</label>
             <input type="number" id="f7_x" value="300" min="50">
-            
+
             <button id="btn_analyze_f7">查找频繁路径</button>
             <button id="btn_clear_f7">清除结果</button>
         </div>
-        
+
         <!-- F8: 区域间频繁路径分析功能 -->
         <div class="function-group">
             <h4>区域间频繁路径分析 (F8)</h4>
-            
+
             <div class="area-selection-group">
                 <h5>区域A (起点区域)</h5>
                 <div class="coord-input-group">
@@ -230,7 +244,7 @@
                         <input type="number" id="f8_a_lat1" step="0.000001">
                     </div>
                 </div>
-                
+
                 <div class="coord-input-group">
                     <div>
                         <label for="f8_a_lon2">右下经度:</label>
@@ -243,7 +257,7 @@
                 </div>
                 <button id="btn_draw_area_a">在地图上绘制区域A</button>
             </div>
-            
+
             <div class="area-selection-group">
                 <h5>区域B (终点区域)</h5>
                 <div class="coord-input-group">
@@ -256,7 +270,7 @@
                         <input type="number" id="f8_b_lat1" step="0.000001">
                     </div>
                 </div>
-                
+
                 <div class="coord-input-group">
                     <div>
                         <label for="f8_b_lon2">右下经度:</label>
@@ -269,18 +283,18 @@
                 </div>
                 <button id="btn_draw_area_b">在地图上绘制区域B</button>
             </div>
-            
+
             <label for="f8_k">显示路径数量(k):</label>
             <input type="number" id="f8_k" value="5" min="1">
-            
+
             <button id="btn_analyze_f8">分析A到B的频繁路径</button>
             <button id="btn_clear_f8">清除结果</button>
         </div>
-        
+
         <!-- F9: 通行时间分析功能 -->
         <div class="function-group">
             <h4>最短通行时间分析 (F9)</h4>
-            
+
             <div class="area-selection-group">
                 <h5>区域A (起点区域)</h5>
                 <div class="coord-input-group">
@@ -293,7 +307,7 @@
                         <input type="number" id="f9_a_lat1" step="0.000001">
                     </div>
                 </div>
-                
+
                 <div class="coord-input-group">
                     <div>
                         <label for="f9_a_lon2">右下经度:</label>
@@ -306,7 +320,7 @@
                 </div>
                 <button id="btn_draw_f9_area_a">在地图上绘制区域A</button>
             </div>
-            
+
             <div class="area-selection-group">
                 <h5>区域B (终点区域)</h5>
                 <div class="coord-input-group">
@@ -319,7 +333,7 @@
                         <input type="number" id="f9_b_lat1" step="0.000001">
                     </div>
                 </div>
-                
+
                 <div class="coord-input-group">
                     <div>
                         <label for="f9_b_lon2">右下经度:</label>
@@ -332,16 +346,16 @@
                 </div>
                 <button id="btn_draw_f9_area_b">在地图上绘制区域B</button>
             </div>
-            
+
             <label for="f9_start_time">开始时间:</label>
             <input type="datetime-local" id="f9_start_time" min="2008-02-01T00:00" max="2008-02-08T23:59">
-            
+
             <label for="f9_end_time">结束时间:</label>
             <input type="datetime-local" id="f9_end_time" min="2008-02-01T00:00" max="2008-02-08T23:59">
-            
+
             <button id="btn_analyze_f9">分析A到B的最短通行时间</button>
             <button id="btn_clear_f9">清除结果</button>
         </div>
     </div>
 </body>
-</html> 
+</html>

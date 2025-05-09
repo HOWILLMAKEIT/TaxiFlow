@@ -87,14 +87,15 @@ def query_rectangle():
         # 执行查询
         start_query_time = time.time()
         
-        # 使用集合来避免重复计数
         taxi_ids = set()
         count = 0
-        
-        # 对结果进行遍历，收集唯一的出租车ID
-        for item in idx.intersection(search_bbox, objects=True):
-            taxi_id = item.object  # 获取存储的出租车ID
-            taxi_ids.add(taxi_id)
+
+        # 获取查询结果的迭代器
+        results = idx.intersection(search_bbox, objects=True)
+
+        # 单次遍历计算唯一ID和总点数
+        for item in results:
+            taxi_ids.add(item.object)
             count += 1
         
         # 查询结束时间
@@ -108,7 +109,6 @@ def query_rectangle():
         return jsonify({
             'count': len(taxi_ids),  # 独立出租车数量
             'total_points': count,   # 总轨迹点数
-            'taxi_ids': list(taxi_ids)[:100],  # 限制返回的ID数量以避免响应过大
             'query_time': query_time
         })
         

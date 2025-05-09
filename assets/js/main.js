@@ -5,14 +5,20 @@
 // 导入模块
 import { mapPromise } from './modules/mapInit.js';
 import { showTrack, clearCurrentTracks } from './modules/F1_taxi_routes.js';
-import { 
-    initAreaQueryTools, 
+import {
+    initAreaQueryTools,
     startDrawRectangle,
     executeAreaQuery,
     clearQueryResults,
     stopDrawingTool
 } from './modules/F3_area_query.js';
 import { analyzeDensity, clearDensityLayer } from './modules/F4_density_analysis.js';
+import {
+    initAreaRelationTools,
+    startDrawAreaA,
+    executeAreaRelationAnalysis,
+    clearAreaRelationResults
+} from './modules/F5_area_relation.js';
 
 // 全局地图实例
 let map = null;
@@ -20,21 +26,24 @@ let map = null;
 // 初始化应用
 document.addEventListener('DOMContentLoaded', async function() {
     console.log("DOM加载完成，初始化应用...");
-    
+
     try {
         // 等待地图初始化完成
         map = await mapPromise;
         console.log("地图实例获取成功:", map);
-        
+
         // 初始化区域查询工具
         initAreaQueryTools(map);
-        
+
+        // 初始化区域关联分析工具
+        initAreaRelationTools(map);
+
         // 设置事件监听
         setupEventListeners();
-        
+
         // 设置默认日期时间值
         setDefaultDateTimes();
-        
+
         console.log("应用初始化完成");
     } catch (error) {
         console.error("应用初始化失败:", error);
@@ -48,21 +57,21 @@ function setDefaultDateTimes() {
     const now = new Date();
     const yesterday = new Date(now);
     yesterday.setDate(now.getDate() - 1);
-    
+
     // 格式化为datetime-local输入框所需的格式 (YYYY-MM-DDThh:mm)
     const formatDate = (date) => {
         const pad = (num) => num.toString().padStart(2, '0');
         return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
     };
-    
+
     // 设置所有日期输入框的默认值
     const startTimeInputs = document.querySelectorAll('input[type="datetime-local"][id$="_start_time"]');
     const endTimeInputs = document.querySelectorAll('input[type="datetime-local"][id$="_end_time"]');
-    
+
     startTimeInputs.forEach(input => {
         input.value = formatDate(yesterday);
     });
-    
+
     endTimeInputs.forEach(input => {
         input.value = formatDate(now);
     });
@@ -73,12 +82,12 @@ function setDefaultDateTimes() {
  */
 function setupEventListeners() {
     console.log("设置UI事件监听器...");
-    
+
     // ===== F1/F2: 轨迹显示功能 =====
     document.getElementById('btn_show_track').addEventListener('click', function() {
         const taxiId = document.getElementById('taxi_id').value;
         console.log('触发: 显示轨迹', '出租车ID:', taxiId || '全部');
-        
+
         // 判断是显示单个出租车还是所有出租车轨迹
         if (taxiId) {
             // 调用API获取单个出租车轨迹
@@ -116,7 +125,7 @@ function setupEventListeners() {
                 });
         }
     });
-    
+
     document.getElementById('btn_clear_track').addEventListener('click', function() {
         console.log('触发: 清除轨迹');
         clearCurrentTracks(map);
@@ -127,13 +136,13 @@ function setupEventListeners() {
         console.log('触发: 绘制矩形区域');
         startDrawRectangle();
     });
-    
+
     document.getElementById('btn_execute_query').addEventListener('click', function() {
         console.log('触发: 执行区域查询');
         // 执行区域查询，将轨迹显示函数 showTrack 作为回调传入
         executeAreaQuery(map, showTrack);
     });
-    
+
     document.getElementById('btn_clear_query').addEventListener('click', function() {
         console.log('触发: 清除查询');
         clearQueryResults(map); // 传入map以清除绘制的图形
@@ -146,13 +155,13 @@ function setupEventListeners() {
         const startTime = document.getElementById('f4_start_time').value;
         const endTime = document.getElementById('f4_end_time').value;
         const gridSize = document.getElementById('f4_grid_size').value;
-        
+
         console.log('触发: 分析车流密度', { startTime, endTime, gridSize });
-        
+
         // 调用密度分析模块的功能
         analyzeDensity(map, startTime, endTime, gridSize);
     });
-    
+
     document.getElementById('btn_clear_density').addEventListener('click', function() {
         console.log('触发: 清除密度图层');
         clearDensityLayer(map);
@@ -160,10 +169,21 @@ function setupEventListeners() {
 
     // ===== F5-F6: 区域关联分析功能 =====
     document.getElementById('btn_analyze_f5').addEventListener('click', function() {
+        console.log('触发: 开始绘制区域A');
+        startDrawAreaA(map);
+    });
+
+    document.getElementById('btn_execute_f5').addEventListener('click', function() {
         const startTime = document.getElementById('f5_start_time').value;
         const endTime = document.getElementById('f5_end_time').value;
-        console.log('触发: 分析区域间流量', { startTime, endTime });
-        showMessage("功能尚未实现: 双区域流量分析 (F5)");
+        const interval = document.getElementById('f5_interval').value;
+        console.log('触发: 分析区域间流量', { startTime, endTime, interval });
+        executeAreaRelationAnalysis(map);
+    });
+
+    document.getElementById('btn_clear_f5').addEventListener('click', function() {
+        console.log('触发: 清除区域关联分析结果');
+        clearAreaRelationResults(map);
     });
 
     document.getElementById('btn_analyze_f6').addEventListener('click', function() {
@@ -216,13 +236,13 @@ function setupEventListeners() {
  */
 function showMessage(message, type = 'info') {
     console.log(`[${type.toUpperCase()}] ${message}`);
-    
+
     const msgElement = document.getElementById('message-box');
     if (msgElement) {
         msgElement.textContent = message;
         msgElement.className = `message ${type}`;
         msgElement.style.display = 'block';
-        
+
         // 3秒后自动隐藏
         setTimeout(() => {
             if (msgElement.textContent === message) { // 避免快速连续消息时提前隐藏
