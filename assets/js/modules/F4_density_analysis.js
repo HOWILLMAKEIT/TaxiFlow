@@ -146,13 +146,28 @@ function displayDensityGrid(map, data) {
             return;
         }
         
-        // 基于密度值生成颜色 (绿 -> 黄 -> 红)
-        const r = density < 50 ? Math.round(density * 5.1) : 255;
-        const g = density < 50 ? 255 : Math.round(255 - (density - 50) * 5.1);
-        const b = 0;
+        // 计算RGB颜色值
+        let r, g, b;
+        
+        if (density <= 5) {
+            // 绿色到黄色 (0,255,0) -> (255,255,0)
+            r = Math.round((density / 5) * 255);
+            g = 255;
+            b = 0;
+        } else if (density <= 10) {
+            // 黄色到橙色 (255,255,0) -> (255,128,0)
+            r = 255;
+            g = Math.round(255 - ((density - 5) / 5) * 127);
+            b = 0;
+        } else {
+            // 橙色到红色 (255,128,0) -> (255,0,0)
+            r = 255;
+            g = Math.round(128 - ((density - 10) / 90) * 128);
+            b = 0;
+        }
         
         // 密度值越高，填充越不透明
-        const opacity = 0.1 + (density / 100) * 0.6;
+        const opacity = 0.2 + (density / 100) * 0.5;
         
         try {
             // 创建网格多边形
