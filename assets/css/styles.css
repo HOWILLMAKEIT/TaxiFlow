@@ -106,4 +106,16 @@ body, html {
     display: flex;
     align-items: center;
     justify-content: center;
-} 
+}
+
+/* ECharts 提示框样式 */
+.echarts-tooltip-absolute {
+    position: absolute !important;
+    z-index: 10000 !important;
+    pointer-events: auto !important;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3) !important;
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid #ddd !important;
+    padding: 10px !important;
+    border-radius: 4px !important;
+}

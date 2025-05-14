@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -142,6 +143,11 @@
 
     <!-- 消息提示框 -->
     <div id="message-box" class="message info"></div>
+
+    <!-- 全局浮动提示框容器 -->
+    <div id="global-container" style="position: absolute; z-index: 10000; pointer-events: none; top: 0; left: 0; width: 100%; height: 100%;">
+        <div id="chart-tooltip" class="chart-tooltip" style="display: none; position: absolute; z-index: 10001; pointer-events: auto; background-color: rgba(255, 255, 255, 0.95); border: 1px solid #ddd; border-radius: 4px; padding: 10px; box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);"></div>
+    </div>
 
     <!-- 控制面板 -->
     <div id="control_panel">
