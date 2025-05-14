@@ -15,7 +15,7 @@ import {
 import { analyzeDensity, clearDensityLayer } from './modules/F4_density_analysis.js';
 import {
     initAreaRelationTools,
-    startDrawAreaA,
+    startDrawAreaA as startDrawAreaA_F5,
     executeAreaRelationAnalysis,
     clearAreaRelationResults
 } from './modules/F5_area_relation.js';
@@ -25,6 +25,13 @@ import {
     executeAreaRelation2Analysis,
     clearAreaRelation2Results
 } from './modules/F6_area_relation2.js';
+import {
+    initTravelTimeTools,
+    startDrawAreaA as startDrawAreaA_F9,
+    startDrawAreaB,
+    analyzeTravelTime,
+    clearTravelTimeResults
+} from './modules/F9_travel_time.js';
 
 // 全局地图实例
 let map = null;
@@ -46,6 +53,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         // 初始化区域关联分析2工具
         initAreaRelation2Tools(map);
+
+        // 初始化最短通行时间分析工具
+        initTravelTimeTools(map);
 
         // 设置事件监听
         setupEventListeners();
@@ -179,7 +189,7 @@ function setupEventListeners() {
     // ===== F5-F6: 区域关联分析功能 =====
     document.getElementById('btn_analyze_f5').addEventListener('click', function() {
         console.log('触发: 开始绘制区域A');
-        startDrawAreaA(map);
+        startDrawAreaA_F5(map);
     });
 
     document.getElementById('btn_execute_f5').addEventListener('click', function() {
@@ -238,14 +248,24 @@ function setupEventListeners() {
     document.getElementById('btn_analyze_f9').addEventListener('click', function() {
         const startTime = document.getElementById('f9_start_time').value;
         const endTime = document.getElementById('f9_end_time').value;
-        // 获取区域A和B的坐标...
         console.log('触发: 分析最短通行时间', { startTime, endTime });
-        showMessage("功能尚未实现: 最短通行时间分析 (F9)");
+        analyzeTravelTime(map);
     });
-    // 可能需要添加绘制区域A/B和清除F9结果的按钮监听
-    // document.getElementById('btn_draw_f9_area_a').addEventListener(...);
-    // document.getElementById('btn_draw_f9_area_b').addEventListener(...);
-    // document.getElementById('btn_clear_f9').addEventListener(...);
+
+    document.getElementById('btn_draw_f9_area_a').addEventListener('click', function() {
+        console.log('触发: 绘制F9区域A');
+        startDrawAreaA_F9(map);
+    });
+
+    document.getElementById('btn_draw_f9_area_b').addEventListener('click', function() {
+        console.log('触发: 绘制F9区域B');
+        startDrawAreaB(map);
+    });
+
+    document.getElementById('btn_clear_f9').addEventListener('click', function() {
+        console.log('触发: 清除最短通行时间分析结果');
+        clearTravelTimeResults(map);
+    });
 }
 
 /**
