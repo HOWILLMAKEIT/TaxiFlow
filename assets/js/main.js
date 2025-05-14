@@ -25,6 +25,7 @@ import {
     executeAreaRelation2Analysis,
     clearAreaRelation2Results
 } from './modules/F6_area_relation2.js';
+import { analyzeFrequentPaths, clearFrequentPaths } from './modules/F7_frequent_paths.js';
 import {
     initTravelTimeTools,
     startDrawAreaA as startDrawAreaA_F9,
@@ -224,13 +225,16 @@ function setupEventListeners() {
 
     // ===== F7: 全城频繁路径分析功能 =====
     document.getElementById('btn_analyze_f7').addEventListener('click', function() {
-        const k = document.getElementById('f7_k').value;
-        const x = document.getElementById('f7_x').value;
+        const k = parseInt(document.getElementById('f7_k').value);
+        const x = parseFloat(document.getElementById('f7_x').value);
         console.log('触发: 查找全城频繁路径', { k, x });
-        showMessage("功能尚未实现: 全城频繁路径分析 (F7)");
+        analyzeFrequentPaths(map, k, x);
     });
-    // 可能需要添加清除F7结果的按钮监听
-    // document.getElementById('btn_clear_f7').addEventListener(...);
+
+    document.getElementById('btn_clear_f7').addEventListener('click', function() {
+        console.log('触发: 清除频繁路径结果');
+        clearFrequentPaths(map);
+    });
 
     // ===== F8: 区域间频繁路径分析功能 =====
     document.getElementById('btn_analyze_f8').addEventListener('click', function() {
