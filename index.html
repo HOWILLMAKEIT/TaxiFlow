@@ -222,7 +222,23 @@
             <!-- 结果容器 -->
             <div id="f5-result-container"></div>
 
-            <button id="btn_analyze_f6">单区域关联网络</button>
+            <h5>单区域关联分析 (F6)</h5>
+            <label for="f6_start_time">开始时间:</label>
+            <input type="datetime-local" id="f6_start_time" min="2008-02-01T00:00" max="2008-02-08T23:59">
+
+            <label for="f6_end_time">结束时间:</label>
+            <input type="datetime-local" id="f6_end_time" min="2008-02-01T00:00" max="2008-02-08T23:59">
+
+
+
+            <div class="area-tool-group">
+                <button id="btn_analyze_f6">绘制目标区域</button>
+                <button id="btn_execute_f6">分析流量</button>
+                <button id="btn_clear_f6">清除结果</button>
+            </div>
+
+            <!-- 结果容器 -->
+            <div id="f6-result-container"></div>
         </div>
 
         <!-- F7: 全城频繁路径分析功能 -->

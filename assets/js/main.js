@@ -19,6 +19,12 @@ import {
     executeAreaRelationAnalysis,
     clearAreaRelationResults
 } from './modules/F5_area_relation.js';
+import {
+    initAreaRelation2Tools,
+    startDrawTargetArea,
+    executeAreaRelation2Analysis,
+    clearAreaRelation2Results
+} from './modules/F6_area_relation2.js';
 
 // 全局地图实例
 let map = null;
@@ -37,6 +43,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         // 初始化区域关联分析工具
         initAreaRelationTools(map);
+
+        // 初始化区域关联分析2工具
+        initAreaRelation2Tools(map);
 
         // 设置事件监听
         setupEventListeners();
@@ -187,10 +196,20 @@ function setupEventListeners() {
     });
 
     document.getElementById('btn_analyze_f6').addEventListener('click', function() {
-        const startTime = document.getElementById('f5_start_time').value; // 注意这里可能用了f5的时间，是否需要独立时间？
-        const endTime = document.getElementById('f5_end_time').value;
-        console.log('触发: 分析与该区域关联流量', { startTime, endTime });
-        showMessage("功能尚未实现: 单区域关联分析 (F6)");
+        console.log('触发: 开始绘制目标区域');
+        startDrawTargetArea(map);
+    });
+
+    document.getElementById('btn_execute_f6').addEventListener('click', function() {
+        const startTime = document.getElementById('f6_start_time').value;
+        const endTime = document.getElementById('f6_end_time').value;
+        console.log('触发: 分析区域与其他区域间流量', { startTime, endTime });
+        executeAreaRelation2Analysis(map);
+    });
+
+    document.getElementById('btn_clear_f6').addEventListener('click', function() {
+        console.log('触发: 清除区域关联分析2结果');
+        clearAreaRelation2Results(map);
     });
 
     // ===== F7: 全城频繁路径分析功能 =====
