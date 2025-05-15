@@ -11,6 +11,7 @@ from api.F4_density_analysis import density_bp  # 导入密度分析API蓝图
 from api.F5_area_relation import area_relation  # 导入区域关联分析API蓝图
 from api.F6_area_relation2 import area_relation2  # 导入区域关联分析2 API蓝图
 from api.F7_frequent_paths import frequent_paths  # 导入频繁路径分析API蓝图
+from api.F8_frequent_paths_ab import frequent_paths_ab_bp  # 导入A到B频繁路径分析API蓝图
 from api.F9_travel_time import travel_time  # 导入最短通行时间分析API蓝图
 # 导入其他API模块...
 
@@ -20,6 +21,7 @@ app.register_blueprint(density_bp, url_prefix='/api/density')  # 注册密度分
 app.register_blueprint(area_relation, url_prefix='/api/area_relation')  # 注册区域关联分析API蓝图
 app.register_blueprint(area_relation2, url_prefix='/api/area_relation2')  # 注册区域关联分析2 API蓝图
 app.register_blueprint(travel_time, url_prefix='/api/travel_time')  # 注册最短通行时间分析API蓝图
+app.register_blueprint(frequent_paths_ab_bp, url_prefix='/api/frequent_paths_ab')  # 注册A到B频繁路径分析API蓝图
 app.register_blueprint(frequent_paths, url_prefix='/api/frequent_paths')  # 注册频繁路径分析API蓝图
 # 注册其他Blueprint...
 
