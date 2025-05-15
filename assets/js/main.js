@@ -237,16 +237,14 @@ function setupEventListeners() {
     });
 
     // ===== F8: 区域间频繁路径分析功能 =====
-    document.getElementById('btn_analyze_f8').addEventListener('click', function() {
-        const k = document.getElementById('f8_k').value; // 注意这里用了f8的k
-        // 获取区域A和B的坐标...
-        console.log('触发: 查找区域间频繁路径', { k });
-        showMessage("功能尚未实现: 区域间频繁路径分析 (F8)");
-    });
-    // 可能需要添加绘制区域A/B和清除F8结果的按钮监听
-    // document.getElementById('btn_draw_area_a').addEventListener(...);
-    // document.getElementById('btn_draw_area_b').addEventListener(...);
-    // document.getElementById('btn_clear_f8').addEventListener(...);
+    // 初始化F8工具
+    initFrequentPathsABTools(map);
+
+    // 绑定按钮事件
+    document.getElementById('btn_draw_area_a').addEventListener('click', () => startDrawAreaA_F8(map));
+    document.getElementById('btn_draw_area_b').addEventListener('click', () => startDrawAreaB_F8(map));
+    document.getElementById('btn_analyze_f8').addEventListener('click', () => analyzeFrequentPathsAB_F8(map));
+    document.getElementById('btn_clear_f8').addEventListener('click', () => clearFrequentPathsABResults(map));
 
     // ===== F9: 通行时间分析功能 =====
     document.getElementById('btn_analyze_f9').addEventListener('click', function() {
