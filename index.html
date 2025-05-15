@@ -257,62 +257,20 @@
         <!-- F8: 区域间频繁路径分析功能 -->
         <div class="function-group">
             <h4>区域间频繁路径分析 (F8)</h4>
-
+            
             <div class="area-selection-group">
                 <h5>区域A (起点区域)</h5>
-                <div class="coord-input-group">
-                    <div>
-                        <label for="f8_a_lon1">左上经度:</label>
-                        <input type="number" id="f8_a_lon1" step="0.000001">
-                    </div>
-                    <div>
-                        <label for="f8_a_lat1">左上纬度:</label>
-                        <input type="number" id="f8_a_lat1" step="0.000001">
-                    </div>
-                </div>
-
-                <div class="coord-input-group">
-                    <div>
-                        <label for="f8_a_lon2">右下经度:</label>
-                        <input type="number" id="f8_a_lon2" step="0.000001">
-                    </div>
-                    <div>
-                        <label for="f8_a_lat2">右下纬度:</label>
-                        <input type="number" id="f8_a_lat2" step="0.000001">
-                    </div>
-                </div>
                 <button id="btn_draw_area_a">在地图上绘制区域A</button>
             </div>
 
             <div class="area-selection-group">
                 <h5>区域B (终点区域)</h5>
-                <div class="coord-input-group">
-                    <div>
-                        <label for="f8_b_lon1">左上经度:</label>
-                        <input type="number" id="f8_b_lon1" step="0.000001">
-                    </div>
-                    <div>
-                        <label for="f8_b_lat1">左上纬度:</label>
-                        <input type="number" id="f8_b_lat1" step="0.000001">
-                    </div>
-                </div>
-
-                <div class="coord-input-group">
-                    <div>
-                        <label for="f8_b_lon2">右下经度:</label>
-                        <input type="number" id="f8_b_lon2" step="0.000001">
-                    </div>
-                    <div>
-                        <label for="f8_b_lat2">右下纬度:</label>
-                        <input type="number" id="f8_b_lat2" step="0.000001">
-                    </div>
-                </div>
                 <button id="btn_draw_area_b">在地图上绘制区域B</button>
             </div>
-
+            
             <label for="f8_k">显示路径数量(k):</label>
             <input type="number" id="f8_k" value="5" min="1">
-
+            
             <button id="btn_analyze_f8">分析A到B的频繁路径</button>
             <button id="btn_clear_f8">清除结果</button>
         </div>
