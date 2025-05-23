@@ -4,7 +4,7 @@ import numpy as np
 import sys
 from collections import defaultdict
 
-WINDOW_SIZE = 10
+#WINDOW_SIZE = 10
 GRID_SIZE = 0.002  # 约200米
 DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'Data', 'taxi_log_2008_by_id')
 OUT_PATH = os.path.join(os.path.dirname(__file__), '..', 'Data', 'precomputed_path_index.pkl')
@@ -48,9 +48,12 @@ def calculate_path_length(points):
     return total_length
 
 def main():
-    path_to_taxis = defaultdict(set)
+    path_base_dir = os.path.join(os.path.dirname(OUT_PATH), 'path_invert_blocks1')
+    os.makedirs(path_base_dir, exist_ok=True)
+
     files = [fname for fname in os.listdir(DATA_DIR) if fname.endswith('.txt')]
     total = len(files)
+
     for idx, fname in enumerate(files, 1):
         file_path = os.path.join(DATA_DIR, fname)
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -63,39 +66,59 @@ def main():
                 continue
             taxi_id, lon, lat = parsed
             traj.append((lon, lat))
-        if len(traj) < WINDOW_SIZE:
-            # 进度条显示
-            progress = int(idx / total * 50)
-            sys.stdout.write(f"\r[{'=' * progress}{' ' * (50 - progress)}] {idx}/{total} {fname}")
-            sys.stdout.flush()
-            continue
-        seen = set()
-        for i in range(len(traj) - WINDOW_SIZE + 1):# 遍历每个窗口
-            # 取出窗口内的路径点
-            sub_path = traj[i:i+WINDOW_SIZE]
-            grid_sub_path = grid_path(sub_path)
-            path_key = path_to_tuple(grid_sub_path)
-            if path_key in seen:
+
+        seen_dict = defaultdict(set)  # 每个 window_size 独立记录已见路径
+
+        for window_size in range(5,17):  #  （你可根据需要修改为 range(5, 17)）
+            if len(traj) < window_size:
                 continue
-            seen.add(path_key)
-            path_to_taxis[path_key].add(taxi_id)
+
+            # 为当前 window_size 创建独立缓存
+            path_to_taxis = defaultdict(set)
+
+            for i in range(len(traj) - window_size + 1):
+                sub_path = traj[i:i+window_size]
+                grid_sub_path = grid_path(sub_path)
+                path_key = path_to_tuple(grid_sub_path)
+
+                if not path_key:  # 避免空路径导致 IndexError
+                    continue
+
+                if path_key in seen_dict[window_size]:
+                    continue
+                seen_dict[window_size].add(path_key)
+                path_to_taxis[path_key].add(taxi_id)
+
+            # 构建当前 window_size 的分块目录
+            block_dir = os.path.join(path_base_dir, f'window_{window_size}')
+            os.makedirs(block_dir, exist_ok=True)
+
+            # 构建分块索引
+            path_blocks = defaultdict(dict)
+            for path_key, taxi_ids in path_to_taxis.items():
+                first_grid = path_key[0]
+                path_blocks[first_grid][path_key] = taxi_ids
+
+            # 写入磁盘
+            for first_grid, block in path_blocks.items():
+                block_file = os.path.join(block_dir, f'{first_grid[0]:.6f}_{first_grid[1]:.6f}.pkl')
+                if os.path.exists(block_file):
+                    with open(block_file, 'rb') as f:
+                        existing_block = pickle.load(f)
+                    existing_block.update(block)
+                    block_to_write = existing_block
+                else:
+                    block_to_write = block
+                with open(block_file, 'wb') as f:
+                    pickle.dump(block_to_write, f)
+
         # 进度条显示
         progress = int(idx / total * 50)
         sys.stdout.write(f"\r[{'=' * progress}{' ' * (50 - progress)}] {idx}/{total} {fname}")
         sys.stdout.flush()
+
     print()  # 换行
-    # 分块存储倒排索引（每个分块存车辆ID集合）
-    path_blocks = defaultdict(dict)
-    for path_key, taxi_ids in path_to_taxis.items():
-        first_grid = path_key[0]  # 以首点网格为key
-        path_blocks[first_grid][path_key] = taxi_ids
-    block_dir = os.path.join(os.path.dirname(OUT_PATH), 'path_invert_blocks')
-    os.makedirs(block_dir, exist_ok=True)
-    for first_grid, block in path_blocks.items():
-        block_file = os.path.join(block_dir, f'{first_grid[0]:.6f}_{first_grid[1]:.6f}.pkl')
-        with open(block_file, 'wb') as f:
-            pickle.dump(block, f)
-    print(f"分块倒排索引已保存到: {block_dir}")
+    print(f"分块倒排索引已保存到: {path_base_dir}")
 
 if __name__ == '__main__':
     main()
