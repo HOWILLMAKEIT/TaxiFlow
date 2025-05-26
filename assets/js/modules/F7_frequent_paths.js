@@ -98,6 +98,29 @@ export function analyzeFrequentPaths(map, k, minLength) {
 function displayFrequentPaths(map, paths) {
     const polylines = [];
     
+    // 创建路径信息列表容器
+    const pathInfoContainer = document.createElement('div');
+    pathInfoContainer.className = 'path-info-list';
+    pathInfoContainer.style.cssText = `
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        max-height: 80vh;
+        overflow-y: auto;
+        z-index: 1000;
+        width: 300px;
+    `;
+    
+    // 添加标题
+    const title = document.createElement('h3');
+    title.textContent = '频繁路径列表';
+    title.style.margin = '0 0 10px 0';
+    pathInfoContainer.appendChild(title);
+    
     paths.forEach((path, index) => {
         // 计算颜色 - 使用彩虹色谱
         const hue = (index / paths.length) * 360;
@@ -129,7 +152,65 @@ function displayFrequentPaths(map, paths) {
         });
         
         polylines.push(polyline);
+        
+        // 创建路径信息项
+        const pathInfo = document.createElement('div');
+        pathInfo.style.cssText = `
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: ${color}10;
+            cursor: pointer;
+        `;
+        
+        // 添加路径信息内容
+        const startPoint = path.points[0];
+        const endPoint = path.points[path.points.length - 1];
+        pathInfo.innerHTML = `
+            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                <div style="width: 12px; height: 12px; background: ${color}; margin-right: 8px; border-radius: 50%;"></div>
+                <h4 style="margin: 0;">路径 #${index + 1}</h4>
+            </div>
+            <p style="margin: 5px 0;">频次：${path.frequency} 次</p>
+            <p style="margin: 5px 0;">长度：${(path.length/1000).toFixed(2)} 公里</p>
+            <p style="margin: 5px 0;">点数：${path.points.length} 个</p>
+            <p style="margin: 5px 0;">起点：(${startPoint[0].toFixed(6)}, ${startPoint[1].toFixed(6)})</p>
+            <p style="margin: 5px 0;">终点：(${endPoint[0].toFixed(6)}, ${endPoint[1].toFixed(6)})</p>
+        `;
+        
+        // 添加点击事件，点击时高亮显示对应路径
+        pathInfo.onclick = () => {
+            // 移除所有路径的高亮
+            polylines.forEach(p => p.setOptions({ strokeWeight: 8 }));
+            // 高亮当前路径
+            polyline.setOptions({ strokeWeight: 12 });
+            // 将地图中心移动到路径中点
+            map.setCenter(path.points[Math.floor(path.points.length/2)]);
+        };
+        
+        pathInfoContainer.appendChild(pathInfo);
     });
+    
+    // 添加关闭按钮
+    const closeButton = document.createElement('button');
+    closeButton.textContent = '关闭';
+    closeButton.style.cssText = `
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 5px 10px;
+        background: #f44336;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    `;
+    closeButton.onclick = () => pathInfoContainer.remove();
+    pathInfoContainer.appendChild(closeButton);
+    
+    // 将路径信息列表添加到地图容器
+    map.getContainer().appendChild(pathInfoContainer);
     
     // 创建图层组
     currentPathsLayer = new AMap.OverlayGroup(polylines);
