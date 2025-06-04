@@ -25,22 +25,6 @@ export function showTrack(map, trackData) {
             isOutline: false,
             borderWeight: 1
         },
-        {
-            strokeColor: "#3366FF",  // 蓝色
-            strokeWeight: 5,
-            strokeOpacity: 0.8,
-            lineJoin: 'round',
-            isOutline: false,
-            borderWeight: 1
-        },
-        {
-            strokeColor: "#33CC33",  // 绿色
-            strokeWeight: 5,
-            strokeOpacity: 0.8,
-            lineJoin: 'round',
-            isOutline: false,
-            borderWeight: 1
-        }
     ];
     
     // 先清除已有轨迹
@@ -49,7 +33,7 @@ export function showTrack(map, trackData) {
     // 绘制每条轨迹
     trackData.forEach((track, index) => {
         // 选择轨迹样式 (循环使用样式)
-        const style = trackStyles[index % trackStyles.length];
+        const style = trackStyles[0];
         
         // 创建贝塞尔曲线轨迹
         const polyline = new AMap.BezierCurve({
@@ -69,25 +53,17 @@ export function showTrack(map, trackData) {
         // 创建起点标记
         const startMarker = new AMap.Marker({
             position: track.path[0],
-            content: `<div class="track-marker start-marker">${track.id}</div>`,
-            offset: new AMap.Pixel(-15, -15),
+            content: `<div class="track-marker start-marker" style="display:flex;align-items:center;justify-content:center;">${track.id}</div>`,
+            offset: new AMap.Pixel(-22.5, -22.5), // 基于45px宽高的一半进行偏移
             zIndex: 110 // 确保起终点在轨迹和节点上方
         });
         
-        // 创建终点标记
-        const endMarker = new AMap.Marker({
-            position: track.path[track.path.length - 1],
-            content: '<div class="track-marker end-marker"></div>',
-            offset: new AMap.Pixel(-15, -15),
-            zIndex: 110
-        });
         
         // 将标记添加到地图
         startMarker.setMap(map);
-        endMarker.setMap(map);
         
         // 添加到当前轨迹列表中，便于后续清除
-        currentTracks.push(polyline, startMarker, endMarker);
+        currentTracks.push(polyline, startMarker);
         
         // 为每个节点添加小圆点标记
         track.path.forEach((point, pointIndex) => {
@@ -112,7 +88,6 @@ export function showTrack(map, trackData) {
                     <p>车辆ID: ${track.id}</p>
                     <p>起始时间: ${track.timestamp[0]}</p>
                     <p>结束时间: ${track.timestamp[track.timestamp.length-1]}</p>
-                    <p>平均速度: ${track.speed.reduce((a, b) => a + b, 0) / track.speed.length} km/h</p>
                 </div>
             `,
             offset: new AMap.Pixel(0, -30)
