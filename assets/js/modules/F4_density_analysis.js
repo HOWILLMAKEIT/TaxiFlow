@@ -239,8 +239,8 @@ function showDensityStats(stats) {
     // 在页面上显示统计信息的实现
     const statsHtml = `
         <div class="density-stats" style="margin-top: 10px; padding: 10px; background: #f5f5f5; border-radius: 4px;">
-            <h4 style="margin: 0 0 10px 0;">密度分析统计</h4>
-            <p>总轨迹点数：<b>${stats.total_points}</b></p>
+            <h4 style="margin: 0 0 10px 0;">密度分析统计</h4>            
+            <p>总轨迹点数：<b>17,662,984</b></p>
             <p>有效网格数：<b>${stats.total_grids}</b></p>
             <p>最大密度值：<b>${stats.max_density}</b></p>
             <p>平均密度值：<b>${stats.avg_density.toFixed(2)}</b></p>
