@@ -1,6 +1,7 @@
 # TaxiFlow - 出租车轨迹分析系统
 
-![TaxiFlow Logo](assets/icons/icon.png)
+![image](https://github.com/user-attachments/assets/97073455-425d-4a94-829b-f50bebb96a99)
+
 
 ## 项目简介
 
