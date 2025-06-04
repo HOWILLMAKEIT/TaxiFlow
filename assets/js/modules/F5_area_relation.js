@@ -261,7 +261,7 @@ function showFlowChart(data) {
         },
         xAxis: {
             type: 'category',
-            data: timeLabels
+            name: "时间"
         },
         yAxis: {
             type: 'value',
