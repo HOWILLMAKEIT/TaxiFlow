@@ -93,15 +93,7 @@ export function initTravelTimeTools(map) {
         }
     });
 
-    // 设置绘制区域A按钮事件
-    document.getElementById('btn_draw_f9_area_a').addEventListener('click', function() {
-        startDrawAreaA(map);
-    });
 
-    // 设置绘制区域B按钮事件
-    document.getElementById('btn_draw_f9_area_b').addEventListener('click', function() {
-        startDrawAreaB(map);
-    });
 }
 
 /**

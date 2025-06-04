@@ -27,6 +27,13 @@ import {
 } from './modules/F6_area_relation2.js';
 import { analyzeFrequentPaths, clearFrequentPaths } from './modules/F7_frequent_paths.js';
 import {
+    initFrequentPathsABTools,
+    startDrawAreaA_F8,
+    startDrawAreaB_F8,
+    analyzeFrequentPathsAB_F8,
+    clearFrequentPathsABResults
+} from './modules/F8_frequent_paths_ab.js';
+import {
     initTravelTimeTools,
     startDrawAreaA as startDrawAreaA_F9,
     startDrawAreaB,
@@ -54,6 +61,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         // 初始化区域关联分析2工具
         initAreaRelation2Tools(map);
+
+        // 初始化F8频繁路径分析工具
+        initFrequentPathsABTools(map);
 
         // 初始化最短通行时间分析工具
         initTravelTimeTools(map);
@@ -222,9 +232,6 @@ function setupEventListeners() {
     });
 
     // ===== F8: 区域间频繁路径分析功能 =====
-    // 初始化F8工具
-    initFrequentPathsABTools(map);
-
     // 绑定按钮事件
     document.getElementById('btn_draw_area_a').addEventListener('click', () => startDrawAreaA_F8(map));
     document.getElementById('btn_draw_area_b').addEventListener('click', () => startDrawAreaB_F8(map));
