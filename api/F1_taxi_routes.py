@@ -23,31 +23,6 @@ def get_taxi_track(taxi_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# 获取所有出租车轨迹数据
-@taxi_routes.route('/all/tracks', methods=['GET'])
-def get_all_taxi_tracks():
-    try:
-        tracks = []
-        # 获取所有轨迹文件
-        taxi_files = glob.glob(os.path.join(DATA_DIR, '*.txt'))[:20]  # 获取所有出租车轨迹文件
-        
-        for file_path in taxi_files:
-            try:
-                track_data = read_taxi_track(file_path)
-                if track_data and len(track_data['path']) > 0:
-                    tracks.append(track_data)
-            except Exception as e:
-                print(f"读取文件 {file_path} 时出错: {str(e)}")
-                continue
-        
-        if not tracks:
-            return jsonify({'error': '没有找到有效的轨迹数据'}), 404
-            
-        return jsonify(tracks)
-        
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
 def read_taxi_track(file_path):
     """读取单个出租车轨迹文件
     Args:
@@ -72,5 +47,4 @@ def read_taxi_track(file_path):
         'id': taxi_id,
         'path': path,
         'timestamp': timestamp,
-        'speed': [30] * len(path)  # 简化的速度数据
     }
