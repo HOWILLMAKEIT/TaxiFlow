@@ -1,4 +1,6 @@
 # TaxiFlow - 出租车轨迹分析系统
+![image](https://github.com/user-attachments/assets/6fb55ef0-1787-4126-a63d-fb4ca5ec41e4)
+
 
 ![image](https://github.com/user-attachments/assets/97073455-425d-4a94-829b-f50bebb96a99)
 
