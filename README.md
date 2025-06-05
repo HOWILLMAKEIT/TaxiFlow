@@ -138,15 +138,6 @@ python convert_all_pkl_to_sqlite.py
 ```
 
 ### 启动应用
-
-1. **启动后端API服务**
-```bash
-python app.py
-# 或指定端口
-python app.py --port 5000
-```
-
-2. **启动前端应用**
 ```bash
 # 开发模式
 npm run dev
@@ -188,15 +179,7 @@ npm start
    - 设置分析时间范围
    - 点击"分析最短通行时间"获取最优路径
 
-### 打包发布
 
-```bash
-# Windows
-npm run package-win
-
-# 构建所有平台
-npm run build
-```
 
 ## 项目结构
 
